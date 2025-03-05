@@ -30,4 +30,5 @@ jobs:
       - name: Update index.html with emulator link
         run: |
           echo "Updating index.html with the emulator link"
+          # sedコマンドに関するインデントの問題修正
           sed -i "s|YOUR_GENERATED_EMULATOR_LINK|${{ env.emulator_link }}|g" index.html
