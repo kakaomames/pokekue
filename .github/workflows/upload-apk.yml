@@ -25,7 +25,7 @@ jobs:
           echo "EMULATOR_LINK=$emulator_link" >> $GITHUB_ENV
 
       - name: Output emulator link
-        run: echo "Appetize.io Emulator Link: ${EMULATOR_LINK}"
+        run: echo "Appetize.io Emulator Link:${EMULATOR_LINK}"
 
       - name: Update index.html with emulator link
         run: |
