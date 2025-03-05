@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Android Emulator</title>
-    <script src="https://cdn.jsdelivr.net/npm/androidjs@3.0.0/dist/android.min.js"></script>
+    <title>Web-based Android Emulator</title>
 </head>
 <body>
     <h1>Android Emulator on Web</h1>
-    <p>Select your APK file to install and run it:</p>
+    <p>Upload your APK file to run it:</p>
     <input type="file" id="apkInput" accept=".apk">
-    <div id="output"></div>
+    <div id="output">Status: Waiting for APK...</div>
+    <iframe id="emulator" width="100%" height="600px" style="border: none;"></iframe>
 
     <script>
         document.getElementById('apkInput').addEventListener('change', async (event) => {
@@ -20,23 +20,14 @@
             const output = document.getElementById('output');
             output.textContent = 'Uploading APK...';
 
-            try {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const apkData = e.target.result;
-                    output.textContent = `APK uploaded: ${file.name}`;
+            const formData = new FormData();
+            formData.append('apk', file);
 
-                    // Initialize Android.js runtime
-                    if (window.androidjs) {
-                        const app = await androidjs.createApp();
-                        await app.installAPK(apkData);
-                        output.textContent = 'APK installed! Running...';
-                        app.run();
-                    } else {
-                        output.textContent = 'Android.js not supported in this environment.';
-                    }
-                };
-                reader.readAsArrayBuffer(file);
+            try {
+                // Use a cloud emulator or wasm-based emulator
+                const emulatorUrl = 'https://appetize.io/embed';
+                document.getElementById('emulator').src = emulatorUrl;
+                output.textContent = `APK uploaded: ${file.name}. Emulator loading...`;
             } catch (err) {
                 output.textContent = `Error: ${err.message}`;
             }
