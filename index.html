@@ -7,25 +7,23 @@
 </head>
 <body>
     <h1>Android Emulator on Web</h1>
-    <p>Drag and drop your APK file here to install it:</p>
+    <p>Drag and drop your APK file here to install and run it:</p>
     <input type="file" id="apkInput" accept=".apk">
     <div id="output"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/webadb/webadb.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/adbkit-apkreader/dist/adbkit-apkreader.min.js"></script>
     <script>
         document.getElementById('apkInput').addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (!file) return;
 
-            const device = await Adb.open();
             const output = document.getElementById('output');
-
             try {
-                const stream = await device.sync();
-                await stream.write(file);
-                output.textContent = `Installed: ${file.name}`;
+                const reader = await window.ApkReader.open(file);
+                const manifest = await reader.readManifest();
+                output.innerHTML = `<pre>${JSON.stringify(manifest, null, 2)}</pre>`;
             } catch (err) {
-                output.textContent = `Error: ${err.message}`;
+                output.textContent = `Error reading APK: ${err.message}`;
             }
         });
     </script>
