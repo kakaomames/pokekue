@@ -22,13 +22,12 @@ jobs:
             -F "device=Pixel_4" \
             -F "os=android")
           emulator_link=$(echo $response | jq -r '.url')
-          echo "emulator_link=$emulator_link" >> $GITHUB_ENV
+          echo "EMULATOR_LINK=$emulator_link" >> $GITHUB_ENV
 
       - name: Output emulator link
-        run: echo "Appetize.io Emulator Link: ${{ env.emulator_link }}"
+        run: echo "Appetize.io Emulator Link: ${EMULATOR_LINK}"
 
       - name: Update index.html with emulator link
         run: |
           echo "Updating index.html with the emulator link"
-          # sedコマンドに関するインデントの問題修正
-          sed -i "s|YOUR_GENERATED_EMULATOR_LINK|${{ env.emulator_link }}|g" index.html
+          sed -i 's|YOUR_GENERATED_EMULATOR_LINK|${{ env.EMULATOR_LINK }}|g' index.html
