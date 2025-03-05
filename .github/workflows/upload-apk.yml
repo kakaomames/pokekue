@@ -29,4 +29,5 @@ jobs:
 
       - name: Update index.html with emulator link
         run: |
-          sed -i "s|YOUR_GENERATED_EMULATOR_LINK|${{ env.emulator_link }}|g" index.html
+          # 修正されたsedコマンドでindex.htmlを更新
+          sed -i 's|YOUR_GENERATED_EMULATOR_LINK|${{ env.emulator_link }}|g' index.html
