@@ -11,7 +11,7 @@
     <p>Drag and drop your APK file here to install and run it:</p>
     <input type="file" id="apkInput" accept=".apk">
     <div id="output"></div>
-    <div id="emulator" style="width: 100%; height: 600px; background: #000;"></div>
+    <iframe id="emulator" style="width: 100%; height: 600px; background: #000; border: none;"></iframe>
 
     <script>
         document.getElementById('apkInput').addEventListener('change', async (event) => {
@@ -26,7 +26,11 @@
                 reader.onload = async (e) => {
                     const apkData = e.target.result;
                     output.textContent = `APK uploaded: ${file.name}`;
-                    // Placeholder: Integrate with Android.js emulator
+
+                    // Load the APK into the emulator
+                    const blob = new Blob([apkData], { type: 'application/vnd.android.package-archive' });
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('emulator').src = url;
                 };
                 reader.readAsArrayBuffer(file);
             } catch (err) {
