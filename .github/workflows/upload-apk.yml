@@ -1,0 +1,32 @@
+name: Upload APK to Appetize.io
+
+on:
+  push:
+    paths:
+      - 'assets/my-app.apk'
+
+jobs:
+  upload_apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Upload APK to Appetize.io
+        id: upload_apk
+        run: |
+          response=$(curl -X POST https://appetize.io/api/v1/upload \
+            -H "Authorization: Bearer tok_pq2qemvv42jasn3bet637ewgsa" \
+            -F "file=@assets/my-app.apk" \
+            -F "device=Pixel_4" \
+            -F "os=android")
+          emulator_link=$(echo $response | jq -r '.url')
+          echo "emulator_link=$emulator_link" >> $GITHUB_ENV
+
+      - name: Output emulator link
+        run: echo "Appetize.io Emulator Link: ${{ env.emulator_link }}"
+
+      - name: Update index.html with emulator link
+        run: |
+          sed -i "s|YOUR_GENERATED_EMULATOR_LINK|${{ env.emulator_link }}|g" index.html
