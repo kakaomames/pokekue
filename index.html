@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Android Emulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/androidjs@3.0.0/dist/android.min.js"></script>
 </head>
 <body>
-    <h1>ウェブ上のAndroidエミュレーター</h1>
+    <h1>Android Emulator on Web</h1>
     <p>Drag and drop your APK file here to install and run it:</p>
     <input type="file" id="apkInput" accept=".apk">
     <div id="output"></div>
-    <iframe id="emulator" src="https://wasmcloud.org/demo/android" width="100%" height="600px"></iframe>
+    <div id="emulator" style="width: 100%; height: 600px; background: #000;"></div>
 
     <script>
         document.getElementById('apkInput').addEventListener('change', async (event) => {
@@ -21,8 +22,13 @@
             output.textContent = 'Uploading APK...';
 
             try {
-                output.textContent = `APK uploaded: ${file.name}`;
-                // APK handling: integration with emulator in next step
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const apkData = e.target.result;
+                    output.textContent = `APK uploaded: ${file.name}`;
+                    // Placeholder: Integrate with Android.js emulator
+                };
+                reader.readAsArrayBuffer(file);
             } catch (err) {
                 output.textContent = `Error: ${err.message}`;
             }
@@ -30,4 +36,3 @@
     </script>
 </body>
 </html>
-
