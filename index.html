@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Android Emulator</title>
+    <title>アンドロイドエミュレーター</title>
 </head>
 <body>
     <h1>Android Emulator on Web</h1>
-    <p>Drag and drop your APK file here to install and run it:</p>
+    <p>Drag and drop your APK file here to view its contents:</p>
     <input type="file" id="apkInput" accept=".apk">
     <div id="output"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/adbkit-apkreader/dist/adbkit-apkreader.min.js"></script>
     <script>
         document.getElementById('apkInput').addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (!file) return;
 
             const output = document.getElementById('output');
+            output.textContent = 'Reading APK...';
+
             try {
-                const reader = await window.ApkReader.open(file);
-                const manifest = await reader.readManifest();
-                output.innerHTML = `<pre>${JSON.stringify(manifest, null, 2)}</pre>`;
+                const zip = await file.arrayBuffer();
+                const blob = new Blob([zip], { type: 'application/zip' });
+                const url = URL.createObjectURL(blob);
+                output.innerHTML = `<a href="${url}" download="${file.name}.zip">Download extracted APK (as ZIP)</a>`;
             } catch (err) {
-                output.textContent = `Error reading APK: ${err.message}`;
+                output.textContent = `Error: ${err.message}`;
             }
         });
     </script>
