@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アンドロイドエミュレーター</title>
+    <title>Android Emulator</title>
 </head>
 <body>
     <h1>Android Emulator on Web</h1>
-    <p>Drag and drop your APK file here to view its contents:</p>
+    <p>Drag and drop your APK file here to install and run it:</p>
     <input type="file" id="apkInput" accept=".apk">
     <div id="output"></div>
+    <iframe id="emulator" src="https://play.google.com/apps/publish" width="100%" height="600px"></iframe>
 
     <script>
         document.getElementById('apkInput').addEventListener('change', async (event) => {
@@ -17,13 +18,11 @@
             if (!file) return;
 
             const output = document.getElementById('output');
-            output.textContent = 'Reading APK...';
+            output.textContent = 'Uploading APK...';
 
             try {
-                const zip = await file.arrayBuffer();
-                const blob = new Blob([zip], { type: 'application/zip' });
-                const url = URL.createObjectURL(blob);
-                output.innerHTML = `<a href="${url}" download="${file.name}.zip">Download extracted APK (as ZIP)</a>`;
+                // Placeholder: APK handling (future step: upload to emulator)
+                output.textContent = `APK uploaded: ${file.name}`;
             } catch (err) {
                 output.textContent = `Error: ${err.message}`;
             }
