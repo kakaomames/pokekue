@@ -8,10 +8,9 @@
 </head>
 <body>
     <h1>Android Emulator on Web</h1>
-    <p>Drag and drop your APK file here to install and run it:</p>
+    <p>Select your APK file to install and run it:</p>
     <input type="file" id="apkInput" accept=".apk">
     <div id="output"></div>
-    <iframe id="emulator" style="width: 100%; height: 600px; background: #000; border: none;"></iframe>
 
     <script>
         document.getElementById('apkInput').addEventListener('change', async (event) => {
@@ -27,10 +26,15 @@
                     const apkData = e.target.result;
                     output.textContent = `APK uploaded: ${file.name}`;
 
-                    // Load the APK into the emulator
-                    const blob = new Blob([apkData], { type: 'application/vnd.android.package-archive' });
-                    const url = URL.createObjectURL(blob);
-                    document.getElementById('emulator').src = url;
+                    // Initialize Android.js runtime
+                    if (window.androidjs) {
+                        const app = await androidjs.createApp();
+                        await app.installAPK(apkData);
+                        output.textContent = 'APK installed! Running...';
+                        app.run();
+                    } else {
+                        output.textContent = 'Android.js not supported in this environment.';
+                    }
                 };
                 reader.readAsArrayBuffer(file);
             } catch (err) {
