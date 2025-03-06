@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ウェブベースのAndroidエミュレーター</title>
+    <title>Web-based Android Emulator</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         #controls { margin-bottom: 20px; }
@@ -13,17 +13,17 @@
     </style>
 </head>
 <body>
-    <h1>ウェブ上のAndroidエミュレーター</h1>
-    <p>APKファイルをアップロードして実行します。</p>
+    <h1>Android Emulator on Web</h1>
+    <p>Upload your APK file to run it:</p>
     <input type="file" id="apkInput" accept=".apk">
     
     <div id="controls">
-        <button id="reloadBtn">APKのリロード</button>
-        <button id="restartBtn">エミュレータの再起動</button>
-        <button id="stopBtn">エミュレータを停止する</button>
+        <button id="reloadBtn">Reload APK</button>
+        <button id="restartBtn">Restart Emulator</button>
+        <button id="stopBtn">Stop Emulator</button>
     </div>
     
-    <div id="output">ステータス：APKを待っています...</div>
+    <div id="output">Status: Waiting for APK...</div>
     <iframe id="emulator"></iframe>
     
     <h2>Logs</h2>
@@ -47,8 +47,8 @@
             formData.append('file', file);
             formData.append('token', API_TOKEN);
             
-            log(`APKのアップロード: ${file.name}`);
-            document.getElementById('output').textContent = 'APKのアップロード...';
+            log(`Uploading APK: ${file.name}`);
+            document.getElementById('output').textContent = 'Uploading APK...';
             
             try {
                 const response = await fetch('https://api.appetize.io/v1/apps', {
@@ -60,31 +60,31 @@
                 if (result.publicKey) {
                     const embedUrl = `https://appetize.io/embed/${result.publicKey}`;
                     document.getElementById('emulator').src = embedUrl;
-                    log('エミュレータが起動しました。');
-                    document.getElementById('output').textContent = `ランニング: ${file.name}`;
+                    log('Emulator started.');
+                    document.getElementById('output').textContent = `Running: ${file.name}`;
                 } else {
-                    throw new Error(result.error || 'エミュレータの起動に失敗しました');
+                    throw new Error(result.error || 'Failed to start emulator');
                 }
             } catch (err) {
                 log(`Error: ${err.message}`);
-                document.getElementById('output').textContent = `間違い: ${err.message}`;
+                document.getElementById('output').textContent = `Error: ${err.message}`;
             }
         });
 
         document.getElementById('reloadBtn').addEventListener('click', () => {
             document.getElementById('apkInput').click();
-            log('リロードボタンがクリックされました。');
+            log('Reload button clicked.');
         });
 
         document.getElementById('restartBtn').addEventListener('click', () => {
             const emulator = document.getElementById('emulator');
             emulator.contentWindow.location.reload();
-            log('エミュレータが再起動しました。');
+            log('Emulator restarted.');
         });
 
         document.getElementById('stopBtn').addEventListener('click', () => {
             document.getElementById('emulator').src = '';
-            log('エミュレータが停止しました。');
+            log('Emulator stopped.');
         });
     </script>
 </body>
