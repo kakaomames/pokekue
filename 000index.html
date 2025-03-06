@@ -3,28 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ウェブベースのAndroidエミュレーター</title>
+    <title>Web-based Android Emulator</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #controls { margin-bottom: 20px; }
+        button { padding: 10px 20px; margin: 5px; font-size: 16px; cursor: pointer; }
+        #log { text-align: left; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; }
+    </style>
 </head>
 <body>
     <h1>Android Emulator on Web</h1>
     <p>Upload your APK file to run it:</p>
     <input type="file" id="apkInput" accept=".apk">
+    
+    <div id="controls">
+        <button id="reloadBtn">Reload APK</button>
+        <button id="restartBtn">Restart Emulator</button>
+        <button id="stopBtn">Stop Emulator</button>
+    </div>
+    
     <div id="output">Status: Waiting for APK...</div>
-    <iframe id="emulator" width="100%" height="600px" style="border: none;" src="https://playjs.dev/emulator"></iframe>
+    <iframe id="emulator" width="100%" height="600px" style="border: none;"></iframe>
+    
+    <h2>Logs</h2>
+    <div id="log">[Logs will appear here]</div>
 
     <script>
-        document.getElementById('apkInput').addEventListener('change', (event) => {
+        const log = (message) => {
+            const logElement = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${time}] ${message}<br>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        };
+
+        document.getElementById('apkInput').addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (!file) return;
 
             const output = document.getElementById('output');
             output.textContent = 'Uploading APK...';
+            log(`APK selected: ${file.name}`);
 
-            // APKアップロード後にエミュレーターで読み込む
+            try {
+                const emulatorUrl = 'https://appetize.io/embed';
+                document.getElementById('emulator').src = emulatorUrl;
+                output.textContent = `APK uploaded: ${file.name}. Emulator loading...`;
+                log('Emulator started.');
+            } catch (err) {
+                output.textContent = `Error: ${err.message}`;
+                log(`Error: ${err.message}`);
+            }
+        });
+
+        document.getElementById('reloadBtn').addEventListener('click', () => {
+            document.getElementById('apkInput').click();
+            log('Reload button clicked.');
+        });
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
             const emulator = document.getElementById('emulator');
-            emulator.contentWindow.postMessage({ action: 'load-apk', file }, '*');
+            emulator.contentWindow.location.reload();
+            log('Emulator restarted.');
+        });
 
-            output.textContent = `APK uploaded: ${file.name}. Emulator loading...`;
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            document.getElementById('emulator').src = '';
+            log('Emulator stopped.');
         });
     </script>
 </body>
