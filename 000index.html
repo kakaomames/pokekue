@@ -3,34 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web-based Android Emulator</title>
+    <title>ウェブベースのAndroidエミュレーター</title>
 </head>
 <body>
     <h1>Android Emulator on Web</h1>
     <p>Upload your APK file to run it:</p>
     <input type="file" id="apkInput" accept=".apk">
     <div id="output">Status: Waiting for APK...</div>
-    <iframe id="emulator" width="100%" height="600px" style="border: none;"></iframe>
+    <iframe id="emulator" width="100%" height="600px" style="border: none;" src="https://playjs.dev/emulator"></iframe>
 
     <script>
-        document.getElementById('apkInput').addEventListener('change', async (event) => {
+        document.getElementById('apkInput').addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (!file) return;
 
             const output = document.getElementById('output');
             output.textContent = 'Uploading APK...';
 
-            const formData = new FormData();
-            formData.append('apk', file);
+            // APKアップロード後にエミュレーターで読み込む
+            const emulator = document.getElementById('emulator');
+            emulator.contentWindow.postMessage({ action: 'load-apk', file }, '*');
 
-            try {
-                // Use a cloud emulator or wasm-based emulator
-                const emulatorUrl = 'https://appetize.io/embed';
-                document.getElementById('emulator').src = emulatorUrl;
-                output.textContent = `APK uploaded: ${file.name}. Emulator loading...`;
-            } catch (err) {
-                output.textContent = `Error: ${err.message}`;
-            }
+            output.textContent = `APK uploaded: ${file.name}. Emulator loading...`;
         });
     </script>
 </body>
