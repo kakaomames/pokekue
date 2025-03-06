@@ -13,14 +13,14 @@
     </style>
 </head>
 <body>
-    <h1>Android Emulator on Web</h1>
-    <p>Upload your APK file to run it:</p>
+    <h1>ウェブ上のAndroidエミュレーター</h1>
+    <p>APKファイルをアップロードして実行する:</p>
     <input type="file" id="apkInput" accept=".apk">
     
     <div id="controls">
-        <button id="reloadBtn">Reload APK</button>
-        <button id="restartBtn">Restart Emulator</button>
-        <button id="stopBtn">Stop Emulator</button>
+        <button id="reloadBtn">APKのリロード</button>
+        <button id="restartBtn">エミュレータの再起動</button>
+        <button id="stopBtn">エミュレータを停止する</button>
     </div>
     
     <div id="output">Status: Waiting for APK...</div>
@@ -46,6 +46,7 @@
             const formData = new FormData();
             formData.append('file', file);
             formData.append('token', API_TOKEN);
+            formData.append('platform', 'android');
             
             log(`Uploading APK: ${file.name}`);
             document.getElementById('output').textContent = 'Uploading APK...';
@@ -57,10 +58,10 @@
                 });
                 const result = await response.json();
                 
-                if (result.publicKey) {
+                if (response.ok && result.publicKey) {
                     const embedUrl = `https://appetize.io/embed/${result.publicKey}`;
                     document.getElementById('emulator').src = embedUrl;
-                    log('Emulator started.');
+                    log('Emulator started successfully.');
                     document.getElementById('output').textContent = `Running: ${file.name}`;
                 } else {
                     throw new Error(result.error || 'Failed to start emulator');
@@ -73,13 +74,17 @@
 
         document.getElementById('reloadBtn').addEventListener('click', () => {
             document.getElementById('apkInput').click();
-            log('Reload button clicked.');
+            log('Reload button clicked. Please upload an APK again.');
         });
 
         document.getElementById('restartBtn').addEventListener('click', () => {
             const emulator = document.getElementById('emulator');
-            emulator.contentWindow.location.reload();
-            log('Emulator restarted.');
+            if (emulator.src) {
+                emulator.contentWindow.location.reload();
+                log('Emulator restarted.');
+            } else {
+                log('No emulator running to restart.');
+            }
         });
 
         document.getElementById('stopBtn').addEventListener('click', () => {
