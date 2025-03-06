@@ -3,7 +3,7 @@ name: Upload APK to Appetize.io
 on:
   push:
     paths:
-      - 'assets/Minecraft_1.21.60.10.apk'
+      - 'pokekue/assets/Minecraft_1.21.60.10.apk'
 
 jobs:
   upload_apk:
@@ -20,7 +20,7 @@ jobs:
           response=$(curl --http1.1 https://api.appetize.io/v1/apps \
             -H 'Authorization: Bearer tok_pq2qemvv42jasn3bet637ewgsa' \
             -H 'Content-Type: application/json' \
-            -d '{"url": "https://pokemogukunns.github.io/assets/Minecraft_1.21.60.10.apk", "platform": "android"}')
+            -d '{"url": "https://pokemogukunns.github.io/pokekue/assets/Minecraft_1.21.60.10.apk", "platform": "android"}')
           
           # Extract emulator link from the response
           emulator_link=$(echo $response | jq -r '.url')
@@ -32,22 +32,23 @@ jobs:
       - name: Verify current index.html content
         run: |
           echo "Current index.html content:"
-          cat index.html
+          cat pokekue/index.html
 
       - name: Update index.html with emulator link
         run: |
           echo "Updating index.html with the emulator link"
-          sed -i '' "s|YOUR_GENERATED_EMULATOR_LINK|${{ env.EMULATOR_LINK }}|g" index.html
+          # Replace 'YOUR_GENERATED_EMULATOR_LINK' with the actual emulator link
+          sed -i '' "s|YOUR_GENERATED_EMULATOR_LINK|${{ env.EMULATOR_LINK }}|g" pokekue/index.html
 
       - name: Verify updated index.html content
         run: |
           echo "Updated index.html content:"
-          cat index.html
+          cat pokekue/index.html
           
       - name: Commit and push changes to GitHub
         run: |
           git config --global user.email "your-email@example.com"
           git config --global user.name "Your GitHub Username"
-          git add index.html
+          git add pokekue/index.html
           git commit -m "Update index.html with new emulator link"
           git push
