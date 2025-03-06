@@ -13,14 +13,16 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-      - name: Upload APK to Appetize.io
+      - name: Upload APK to Appetize.io (using API)
         id: upload_apk
         run: |
-          response=$(curl -X POST https://appetize.io/api/v1/upload \
-            -H "Authorization: Bearer tok_pq2qemvv42jasn3bet637ewgsa" \
-            -F "file=@assets/Minecraft_1.21.60.10.apk" \
-            -F "device=Pixel_4" \
-            -F "os=android")
+          # Replace with your Appetize.io API token and file URL
+          response=$(curl --http1.1 https://api.appetize.io/v1/apps \
+            -H 'Authorization: Bearer tok_pq2qemvv42jasn3bet637ewgsa' \
+            -H 'Content-Type: application/json' \
+            -d '{"url": "https://pokemogukunns.github.io/assets/Minecraft_1.21.60.10.apk", "platform": "android"}')
+          
+          # Extract emulator link from the response
           emulator_link=$(echo $response | jq -r '.url')
           echo "EMULATOR_LINK=$emulator_link" >> $GITHUB_ENV
 
@@ -41,4 +43,11 @@ jobs:
         run: |
           echo "Updated index.html content:"
           cat index.html
-
+          
+      - name: Commit and push changes to GitHub
+        run: |
+          git config --global user.email "your-email@example.com"
+          git config --global user.name "Your GitHub Username"
+          git add index.html
+          git commit -m "Update index.html with new emulator link"
+          git push
